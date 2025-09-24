@@ -31,7 +31,7 @@ risk_keywords = [
 model = WhisperModel("base", device="cpu", compute_type="int8")
 
 # 📌 구글시트 연결
-def connect_gsheet(sheet_name="YouTubeDaily"):
+def connect_gsheet(sheet_name="STT변환결과"):
     creds_dict = json.loads(GSHEETS_KEY)
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
@@ -130,3 +130,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
