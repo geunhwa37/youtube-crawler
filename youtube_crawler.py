@@ -30,13 +30,16 @@ risk_keywords = [
 # 🎙 Whisper 모델 (CPU)
 model = WhisperModel("base", device="cpu", compute_type="int8")
 
-# 📌 구글시트 연결
-def connect_gsheet(sheet_name="STT변환결과"):
+# 📌 구글시트 연결 (ID 버전)
+def connect_gsheet():
     creds_dict = json.loads(GSHEETS_KEY)
-    scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
+    scope = ["https://spreadsheets.google.com/feeds",
+             "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    return client.open(sheet_name).sheet1
+    # 🔑 파일 ID로 열기
+    return client.open_by_key("11N-GVX670-a1-pwsA7Qs0o9HwqBgiJOHMgJ7Me-IKjs").worksheet("STT변환결과")
+
 
 # 📌 데이터 시트 업로드
 def upload_to_sheet(df, sheet):
@@ -131,5 +134,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
