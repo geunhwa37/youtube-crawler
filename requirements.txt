@@ -1,0 +1,8 @@
+yt-dlp
+faster-whisper
+pydub
+google-api-python-client
+pandas
+gspread
+oauth2client
+gspread_dataframe
