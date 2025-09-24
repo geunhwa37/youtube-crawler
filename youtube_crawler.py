@@ -134,7 +134,8 @@ def main():
         df = pd.DataFrame(videos)
 
         # 광고 포함만 필터
-        df = df[df.apply(lambda row: any(ad in (row["title"]+row["description"]) for ad in ads_keywords), axis=1)]
+        df = df[df.apply(lambda row: any(ad in (row["제목"] + row["설명"]) for ad in ads_keywords), axis=1)]
+
         if df.empty: continue
 
         # STT
@@ -157,6 +158,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
