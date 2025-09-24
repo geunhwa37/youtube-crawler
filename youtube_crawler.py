@@ -78,6 +78,7 @@ def transcribe_video(video_id):
     ydl_opts = {
         "format": "bestaudio/best",
         "outtmpl": f"/tmp/{video_id}.%(ext)s",
+        "cookiefile": "cookies.txt",   # ✅ 추가
         "postprocessors": [{
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
@@ -130,4 +131,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
