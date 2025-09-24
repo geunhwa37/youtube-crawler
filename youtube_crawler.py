@@ -145,10 +145,16 @@ def main():
     if final_data:
         df_final = pd.concat(final_data, ignore_index=True)
     
+        # 조회수 500 이상만 필터
+        df_final = df_final[df_final["조회수"] >= 500]
+    
+        # transcript 컬럼 이름 변경
+        df_final.rename(columns={"transcript": "STT변환텍스트"}, inplace=True)
+    
         # 컬럼 순서 고정
         df_final = df_final[
             ["검색 키워드","비디오 ID","제목","설명","채널명",
-             "올린 날짜","조회수","URL","광고성 표현 (T/F)"]
+             "올린 날짜","조회수","URL","광고성 표현 (T/F)","STT변환텍스트"]
         ]
     
         sheet = connect_gsheet()
@@ -158,6 +164,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
