@@ -139,7 +139,7 @@ def main():
         if df.empty: continue
 
         # STT
-        df["transcript"] = df["video_id"].apply(transcribe_video)
+        df["transcript"] = df["비디오 ID"].apply(transcribe_video)
         final_data.append(df)
 
     if final_data:
@@ -158,6 +158,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
