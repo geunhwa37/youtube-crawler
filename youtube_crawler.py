@@ -48,7 +48,7 @@ def upload_to_sheet(df, sheet):
     set_with_dataframe(sheet, df, row=start_row, include_column_header=(start_row == 1))
     print(f"✅ 구글시트 업로드 완료 ({len(df)} 행 추가됨)")
 
-# 📌 유튜브 크롤링
+# 📌 유튜브 크롤링 (조회수 포함)
 def crawl_youtube_videos(keyword, published_after, max_results=20):
     youtube = build("youtube", "v3", developerKey=API_KEY)
     search_response = youtube.search().list(
@@ -63,17 +63,33 @@ def crawl_youtube_videos(keyword, published_after, max_results=20):
     videos = []
     for item in search_response.get("items", []):
         video_id = item["id"]["videoId"]
-        snippet = item["snippet"]
+
+        # 조회수 포함 위해 videos.list 호출
+        video_response = youtube.videos().list(
+            part="snippet,statistics",
+            id=video_id
+        ).execute()
+
+        if not video_response["items"]:
+            continue
+
+        v = video_response["items"][0]
+        snippet = v["snippet"]
+        stats = v.get("statistics", {})
+
         videos.append({
-            "keyword": keyword,
-            "video_id": video_id,
-            "title": snippet["title"],
-            "description": snippet.get("description", ""),
-            "channel_title": snippet["channelTitle"],
-            "published_date": pd.to_datetime(snippet["publishedAt"]).strftime("%Y-%m-%d"),
-            "url": f"https://www.youtube.com/watch?v={video_id}"
+            "검색 키워드": keyword,
+            "비디오 ID": video_id,
+            "제목": snippet["title"],
+            "설명": snippet.get("description", ""),
+            "채널명": snippet["channelTitle"],
+            "올린 날짜": pd.to_datetime(snippet["publishedAt"]).strftime("%Y-%m-%d"),
+            "조회수": int(stats.get("viewCount", 0)),
+            "URL": f"https://www.youtube.com/watch?v={video_id}",
+            "광고성 표현 (T/F)": any(ad in (snippet["title"] + snippet.get("description","")) for ad in ads_keywords)
         })
     return videos
+
 
 # 📌 STT 변환
 def transcribe_video(video_id):
@@ -127,6 +143,13 @@ def main():
 
     if final_data:
         df_final = pd.concat(final_data, ignore_index=True)
+    
+        # 컬럼 순서 고정
+        df_final = df_final[
+            ["검색 키워드","비디오 ID","제목","설명","채널명",
+             "올린 날짜","조회수","URL","광고성 표현 (T/F)"]
+        ]
+    
         sheet = connect_gsheet()
         upload_to_sheet(df_final, sheet)
     else:
@@ -134,6 +157,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
